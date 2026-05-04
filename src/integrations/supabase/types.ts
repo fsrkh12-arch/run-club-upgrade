@@ -14,7 +14,289 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      challenge_members: {
+        Row: {
+          challenge_id: string
+          id: string
+          joined_at: string
+          progress_km: number
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          id?: string
+          joined_at?: string
+          progress_km?: number
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          id?: string
+          joined_at?: string
+          progress_km?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "challenge_members_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "challenges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      challenges: {
+        Row: {
+          badge_label: string
+          created_at: string
+          description: string | null
+          ends_on: string
+          id: string
+          starts_on: string
+          target_km: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          badge_label?: string
+          created_at?: string
+          description?: string | null
+          ends_on?: string
+          id?: string
+          starts_on?: string
+          target_km?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          badge_label?: string
+          created_at?: string
+          description?: string | null
+          ends_on?: string
+          id?: string
+          starts_on?: string
+          target_km?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      community_posts: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          distance_km: number | null
+          id: string
+          pace_seconds: number | null
+          route_name: string | null
+          updated_at: string
+          user_id: string
+          visibility: string
+        }
+        Insert: {
+          category?: string
+          content: string
+          created_at?: string
+          distance_km?: number | null
+          id?: string
+          pace_seconds?: number | null
+          route_name?: string | null
+          updated_at?: string
+          user_id: string
+          visibility?: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          distance_km?: number | null
+          id?: string
+          pace_seconds?: number | null
+          route_name?: string | null
+          updated_at?: string
+          user_id?: string
+          visibility?: string
+        }
+        Relationships: []
+      }
+      goals: {
+        Row: {
+          created_at: string
+          current_value: number
+          due_date: string | null
+          id: string
+          metric: string
+          status: string
+          target_value: number
+          title: string
+          unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_value?: number
+          due_date?: string | null
+          id?: string
+          metric?: string
+          status?: string
+          target_value?: number
+          title: string
+          unit?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_value?: number
+          due_date?: string | null
+          id?: string
+          metric?: string
+          status?: string
+          target_value?: number
+          title?: string
+          unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      post_reactions: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_initials: string
+          bio: string | null
+          city: string
+          created_at: string
+          display_name: string
+          handle: string | null
+          id: string
+          runner_level: string
+          updated_at: string
+          user_id: string
+          weekly_km_goal: number
+        }
+        Insert: {
+          avatar_initials?: string
+          bio?: string | null
+          city?: string
+          created_at?: string
+          display_name?: string
+          handle?: string | null
+          id?: string
+          runner_level?: string
+          updated_at?: string
+          user_id: string
+          weekly_km_goal?: number
+        }
+        Update: {
+          avatar_initials?: string
+          bio?: string | null
+          city?: string
+          created_at?: string
+          display_name?: string
+          handle?: string | null
+          id?: string
+          runner_level?: string
+          updated_at?: string
+          user_id?: string
+          weekly_km_goal?: number
+        }
+        Relationships: []
+      }
+      runs: {
+        Row: {
+          avg_heart_rate: number | null
+          avg_pace_seconds: number
+          cadence: number | null
+          calories: number | null
+          created_at: string
+          distance_km: number
+          duration_seconds: number
+          effort: number
+          elevation_m: number
+          id: string
+          notes: string | null
+          route_name: string
+          run_at: string
+          shoe: string | null
+          updated_at: string
+          user_id: string
+          visibility: string
+          weather: string | null
+        }
+        Insert: {
+          avg_heart_rate?: number | null
+          avg_pace_seconds?: number
+          cadence?: number | null
+          calories?: number | null
+          created_at?: string
+          distance_km?: number
+          duration_seconds?: number
+          effort?: number
+          elevation_m?: number
+          id?: string
+          notes?: string | null
+          route_name: string
+          run_at?: string
+          shoe?: string | null
+          updated_at?: string
+          user_id: string
+          visibility?: string
+          weather?: string | null
+        }
+        Update: {
+          avg_heart_rate?: number | null
+          avg_pace_seconds?: number
+          cadence?: number | null
+          calories?: number | null
+          created_at?: string
+          distance_km?: number
+          duration_seconds?: number
+          effort?: number
+          elevation_m?: number
+          id?: string
+          notes?: string | null
+          route_name?: string
+          run_at?: string
+          shoe?: string | null
+          updated_at?: string
+          user_id?: string
+          visibility?: string
+          weather?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
