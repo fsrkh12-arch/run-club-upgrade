@@ -82,6 +82,106 @@ export type Database = {
         }
         Relationships: []
       }
+      communities: {
+        Row: {
+          city: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          emoji: string
+          id: string
+          is_official: boolean
+          name: string
+          slug: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          emoji?: string
+          id?: string
+          is_official?: boolean
+          name: string
+          slug: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          emoji?: string
+          id?: string
+          is_official?: boolean
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      community_members: {
+        Row: {
+          community_id: string
+          id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          community_id: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          community_id?: string
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_members_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      community_messages: {
+        Row: {
+          community_id: string
+          content: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          community_id: string
+          content: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          community_id?: string
+          content?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_messages_community_id_fkey"
+            columns: ["community_id"]
+            isOneToOne: false
+            referencedRelation: "communities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_posts: {
         Row: {
           category: string
@@ -118,6 +218,27 @@ export type Database = {
           updated_at?: string
           user_id?: string
           visibility?: string
+        }
+        Relationships: []
+      }
+      daily_checkins: {
+        Row: {
+          checkin_on: string
+          id: string
+          user_id: string
+          xp_awarded: number
+        }
+        Insert: {
+          checkin_on?: string
+          id?: string
+          user_id: string
+          xp_awarded?: number
+        }
+        Update: {
+          checkin_on?: string
+          id?: string
+          user_id?: string
+          xp_awarded?: number
         }
         Relationships: []
       }
@@ -201,10 +322,13 @@ export type Database = {
           display_name: string
           handle: string | null
           id: string
+          last_active_on: string | null
           runner_level: string
+          streak_days: number
           updated_at: string
           user_id: string
           weekly_km_goal: number
+          xp: number
         }
         Insert: {
           avatar_initials?: string
@@ -214,10 +338,13 @@ export type Database = {
           display_name?: string
           handle?: string | null
           id?: string
+          last_active_on?: string | null
           runner_level?: string
+          streak_days?: number
           updated_at?: string
           user_id: string
           weekly_km_goal?: number
+          xp?: number
         }
         Update: {
           avatar_initials?: string
@@ -227,10 +354,13 @@ export type Database = {
           display_name?: string
           handle?: string | null
           id?: string
+          last_active_on?: string | null
           runner_level?: string
+          streak_days?: number
           updated_at?: string
           user_id?: string
           weekly_km_goal?: number
+          xp?: number
         }
         Relationships: []
       }
@@ -297,12 +427,66 @@ export type Database = {
         }
         Relationships: []
       }
+      user_settings: {
+        Row: {
+          accent: string
+          default_run_visibility: string
+          language: string
+          notify_challenges: boolean
+          notify_messages: boolean
+          notify_weekly_summary: boolean
+          preferred_run_days: string[]
+          profile_visibility: string
+          show_on_leaderboard: boolean
+          theme: string
+          units: string
+          updated_at: string
+          user_id: string
+          weekly_km_goal: number
+        }
+        Insert: {
+          accent?: string
+          default_run_visibility?: string
+          language?: string
+          notify_challenges?: boolean
+          notify_messages?: boolean
+          notify_weekly_summary?: boolean
+          preferred_run_days?: string[]
+          profile_visibility?: string
+          show_on_leaderboard?: boolean
+          theme?: string
+          units?: string
+          updated_at?: string
+          user_id: string
+          weekly_km_goal?: number
+        }
+        Update: {
+          accent?: string
+          default_run_visibility?: string
+          language?: string
+          notify_challenges?: boolean
+          notify_messages?: boolean
+          notify_weekly_summary?: boolean
+          preferred_run_days?: string[]
+          profile_visibility?: string
+          show_on_leaderboard?: boolean
+          theme?: string
+          units?: string
+          updated_at?: string
+          user_id?: string
+          weekly_km_goal?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_community_member: {
+        Args: { _community_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
