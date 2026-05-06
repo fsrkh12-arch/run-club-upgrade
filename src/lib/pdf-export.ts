@@ -43,7 +43,7 @@ export function exportRunsPdf(opts: { name: string; xp: number; streak: number; 
   const cw = (W - 80) / Math.max(recent.length, 1);
   recent.forEach((r, i) => {
     const h = (Number(r.distance_km) / max) * 110;
-    doc.setFillColor(30); doc.rect(40 + i*cw + 4, 440 - h, cw - 8, h, "F");
+    doc.setFillColor(30); (doc as any).rect(40 + i*cw + 4, 440 - h, cw - 8, h, "F");
     doc.setTextColor(120); doc.setFontSize(8);
     doc.text(`${Number(r.distance_km).toFixed(1)}`, 40 + i*cw + cw/2 - 8, 440 - h - 4);
   });
