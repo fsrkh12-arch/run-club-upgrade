@@ -11,7 +11,7 @@ export function exportRunsPdf(opts: { name: string; xp: number; streak: number; 
   const W = doc.internal.pageSize.getWidth();
   const H = doc.internal.pageSize.getHeight();
   // Header
-  doc.setFillColor(15, 15, 15); doc.rect(0, 0, W, 110, "F");
+  (doc as any).setFillColor(15, 15, 15); (doc as any).rect(0, 0, W, 110, "F");
   doc.setTextColor(255); doc.setFont("helvetica", "bold"); doc.setFontSize(24);
   doc.text("Run Club · Training Report", 40, 50);
   doc.setFont("helvetica", "normal"); doc.setFontSize(11);
@@ -43,7 +43,7 @@ export function exportRunsPdf(opts: { name: string; xp: number; streak: number; 
   const cw = (W - 80) / Math.max(recent.length, 1);
   recent.forEach((r, i) => {
     const h = (Number(r.distance_km) / max) * 110;
-    doc.setFillColor(30); (doc as any).rect(40 + i*cw + 4, 440 - h, cw - 8, h, "F");
+    (doc as any).setFillColor(30, 30, 30); (doc as any).rect(40 + i*cw + 4, 440 - h, cw - 8, h, "F");
     doc.setTextColor(120); doc.setFontSize(8);
     doc.text(`${Number(r.distance_km).toFixed(1)}`, 40 + i*cw + cw/2 - 8, 440 - h - 4);
   });
