@@ -10,6 +10,8 @@ import Dashboard from "./app/Dashboard";
 import Communities from "./app/Communities";
 import Leaderboards from "./app/Leaderboards";
 import SettingsPage from "./app/Settings";
+import Trails from "./app/Trails";
+import NotificationsPage from "./app/Notifications";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/app" element={<AppLayout />}>
             <Route index element={<Dashboard />} />
+            <Route path="trails" element={<Trails />} />
+            <Route path="notifications" element={<NotificationsPage />} />
             <Route path="communities" element={<Communities />} />
             <Route path="leaderboards" element={<Leaderboards />} />
             <Route path="settings" element={<SettingsPage />} />
