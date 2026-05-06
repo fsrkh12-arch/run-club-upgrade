@@ -182,6 +182,27 @@ export type Database = {
           },
         ]
       }
+      community_mutes: {
+        Row: {
+          community_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          community_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          community_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       community_posts: {
         Row: {
           category: string
@@ -249,6 +270,7 @@ export type Database = {
           due_date: string | null
           id: string
           metric: string
+          notified_complete: boolean
           status: string
           target_value: number
           title: string
@@ -262,6 +284,7 @@ export type Database = {
           due_date?: string | null
           id?: string
           metric?: string
+          notified_complete?: boolean
           status?: string
           target_value?: number
           title: string
@@ -275,11 +298,48 @@ export type Database = {
           due_date?: string | null
           id?: string
           metric?: string
+          notified_complete?: boolean
           status?: string
           target_value?: number
           title?: string
           unit?: string
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          community_id: string | null
+          created_at: string
+          data: Json | null
+          id: string
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          community_id?: string | null
+          created_at?: string
+          data?: Json | null
+          id?: string
+          read_at?: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          community_id?: string | null
+          created_at?: string
+          data?: Json | null
+          id?: string
+          read_at?: string | null
+          title?: string
+          type?: string
           user_id?: string
         }
         Relationships: []
@@ -380,6 +440,10 @@ export type Database = {
           route_name: string
           run_at: string
           shoe: string | null
+          start_lat: number | null
+          start_lng: number | null
+          track_points: Json | null
+          trail_id: string | null
           updated_at: string
           user_id: string
           visibility: string
@@ -400,6 +464,10 @@ export type Database = {
           route_name: string
           run_at?: string
           shoe?: string | null
+          start_lat?: number | null
+          start_lng?: number | null
+          track_points?: Json | null
+          trail_id?: string | null
           updated_at?: string
           user_id: string
           visibility?: string
@@ -420,10 +488,53 @@ export type Database = {
           route_name?: string
           run_at?: string
           shoe?: string | null
+          start_lat?: number | null
+          start_lng?: number | null
+          track_points?: Json | null
+          trail_id?: string | null
           updated_at?: string
           user_id?: string
           visibility?: string
           weather?: string | null
+        }
+        Relationships: []
+      }
+      trails: {
+        Row: {
+          city: string | null
+          created_at: string
+          description: string | null
+          distance_km: number
+          id: string
+          is_public: boolean
+          name: string
+          polyline: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          distance_km?: number
+          id?: string
+          is_public?: boolean
+          name: string
+          polyline?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          distance_km?: number
+          id?: string
+          is_public?: boolean
+          name?: string
+          polyline?: Json | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
