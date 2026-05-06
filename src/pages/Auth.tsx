@@ -67,6 +67,7 @@ export default function Auth() {
               <Button className="w-full rounded-xl" onClick={submit} disabled={loading}>{loading ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}</Button>
               <div className="relative my-2 text-center"><span className="bg-background px-3 text-xs text-muted-foreground">or</span><div className="absolute inset-x-0 top-1/2 -z-10 h-px bg-border" /></div>
               <Button variant="outline" className="w-full rounded-xl" onClick={google}>Continue with Google</Button>
+              <Button variant="outline" className="w-full rounded-xl" onClick={async () => { const r = await lovable.auth.signInWithOAuth("apple", { redirect_uri: `${window.location.origin}/app` }); if (r.error) toast.error(String(r.error.message || r.error)); }}> Continue with Apple</Button>
             </div>
           </motion.div>
         </section>
