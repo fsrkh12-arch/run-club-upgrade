@@ -29,7 +29,7 @@ export function exportRunsPdf(opts: { name: string; xp: number; streak: number; 
   doc.setFontSize(14); doc.setFont("helvetica","bold"); doc.text("Lifetime stats", 40, 150);
   const stats = [["Total distance", `${totalKm.toFixed(1)} km`],["Total time", fmtDur(totalSec)],["Avg pace", `${fmtPace(avgPace)} /km`],["Avg HR", avgHr ? `${Math.round(avgHr)} bpm` : "—"],["Training load", load.toFixed(0)]];
   doc.setFont("helvetica","normal"); doc.setFontSize(11);
-  stats.forEach(([k,v], i) => {
+  stats.forEach(([k,v]: any, i: number) => {
     const x = 40 + (i % 3) * 175, y = 180 + Math.floor(i/3) * 50;
     doc.setDrawColor(220); doc.roundedRect(x, y, 165, 38, 6, 6);
     doc.setTextColor(120); doc.text(k, x+10, y+15);
