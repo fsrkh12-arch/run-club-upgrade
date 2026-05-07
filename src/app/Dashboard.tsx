@@ -96,7 +96,7 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto max-w-[1500px] space-y-4 p-4 md:p-6">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-border bg-gradient-to-br from-primary to-primary/90 p-6 text-primary-foreground md:p-8">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="relative overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-primary to-primary/90 p-6 text-primary-foreground md:p-8">
         <div className="pointer-events-none absolute inset-0 grid-bg opacity-15" />
         <div className="relative flex flex-wrap items-end justify-between gap-4">
           <div>
