@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Plus, Users, Hash, Search, ArrowLeft, Swords, Check, Lock, Flame, Sparkles, Trophy } from "lucide-react";
+import { Send, Plus, Users, Hash, Search, ArrowLeft, Swords } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SideQuests from "./SideQuests";
 
 type Community = { id: string; slug: string; name: string; description: string | null; emoji: string; city: string | null; is_official: boolean };
