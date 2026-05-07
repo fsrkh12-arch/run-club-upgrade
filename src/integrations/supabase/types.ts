@@ -380,7 +380,9 @@ export type Database = {
           city: string
           created_at: string
           display_name: string
+          dob: string | null
           handle: string | null
+          height_cm: number | null
           id: string
           last_active_on: string | null
           runner_level: string
@@ -388,6 +390,7 @@ export type Database = {
           updated_at: string
           user_id: string
           weekly_km_goal: number
+          weight_kg: number | null
           xp: number
         }
         Insert: {
@@ -396,7 +399,9 @@ export type Database = {
           city?: string
           created_at?: string
           display_name?: string
+          dob?: string | null
           handle?: string | null
+          height_cm?: number | null
           id?: string
           last_active_on?: string | null
           runner_level?: string
@@ -404,6 +409,7 @@ export type Database = {
           updated_at?: string
           user_id: string
           weekly_km_goal?: number
+          weight_kg?: number | null
           xp?: number
         }
         Update: {
@@ -412,7 +418,9 @@ export type Database = {
           city?: string
           created_at?: string
           display_name?: string
+          dob?: string | null
           handle?: string | null
+          height_cm?: number | null
           id?: string
           last_active_on?: string | null
           runner_level?: string
@@ -420,6 +428,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           weekly_km_goal?: number
+          weight_kg?: number | null
           xp?: number
         }
         Relationships: []
@@ -442,6 +451,7 @@ export type Database = {
           shoe: string | null
           start_lat: number | null
           start_lng: number | null
+          step_count: number | null
           track_points: Json | null
           trail_id: string | null
           updated_at: string
@@ -466,6 +476,7 @@ export type Database = {
           shoe?: string | null
           start_lat?: number | null
           start_lng?: number | null
+          step_count?: number | null
           track_points?: Json | null
           trail_id?: string | null
           updated_at?: string
@@ -490,12 +501,87 @@ export type Database = {
           shoe?: string | null
           start_lat?: number | null
           start_lng?: number | null
+          step_count?: number | null
           track_points?: Json | null
           trail_id?: string | null
           updated_at?: string
           user_id?: string
           visibility?: string
           weather?: string | null
+        }
+        Relationships: []
+      }
+      side_quest_completions: {
+        Row: {
+          completed_at: string
+          id: string
+          quest_id: string
+          run_id: string | null
+          user_id: string
+          xp_awarded: number
+        }
+        Insert: {
+          completed_at?: string
+          id?: string
+          quest_id: string
+          run_id?: string | null
+          user_id: string
+          xp_awarded?: number
+        }
+        Update: {
+          completed_at?: string
+          id?: string
+          quest_id?: string
+          run_id?: string | null
+          user_id?: string
+          xp_awarded?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "side_quest_completions_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "side_quests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      side_quests: {
+        Row: {
+          created_at: string
+          day: string
+          description: string
+          difficulty: string
+          id: string
+          kind: string
+          slot: number
+          threshold: number
+          title: string
+          xp_reward: number
+        }
+        Insert: {
+          created_at?: string
+          day?: string
+          description: string
+          difficulty?: string
+          id?: string
+          kind: string
+          slot: number
+          threshold: number
+          title: string
+          xp_reward?: number
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          description?: string
+          difficulty?: string
+          id?: string
+          kind?: string
+          slot?: number
+          threshold?: number
+          title?: string
+          xp_reward?: number
         }
         Relationships: []
       }
@@ -598,6 +684,7 @@ export type Database = {
         Args: { _community_id: string; _user_id: string }
         Returns: boolean
       }
+      seed_daily_quests: { Args: { _day?: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never

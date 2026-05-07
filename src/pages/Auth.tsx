@@ -15,6 +15,8 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [dob, setDob] = useState("");
+  const [weight, setWeight] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -25,12 +27,18 @@ export default function Auth() {
 
   const submit = async () => {
     if (!email || password.length < 6) return toast.error("Use a valid email and 6+ char password.");
+    if (mode === "signup" && (!name || !dob || !weight)) return toast.error("Add your name, date of birth and weight to personalize your training.");
     setLoading(true);
     const r = mode === "signup"
       ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: `${window.location.origin}/app`, data: { full_name: name || email.split("@")[0] } } })
       : await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (r.error) return toast.error(r.error.message);
+    if (mode === "signup" && (r as any).data?.user) {
+      const uid = (r as any).data.user.id;
+      // Profile row may be created by trigger; upsert personal fields.
+      await supabase.from("profiles").update({ display_name: name, dob, weight_kg: Number(weight), avatar_initials: name.slice(0,2).toUpperCase() }).eq("user_id", uid);
+    }
     toast.success(mode === "signup" ? "Check your email to confirm." : "Welcome back.");
   };
 
@@ -61,7 +69,16 @@ export default function Auth() {
               <button onClick={() => setMode("signup")} className={cn("rounded-lg px-3 py-2 text-sm transition", mode === "signup" && "bg-primary text-primary-foreground")}>Create account</button>
             </div>
             <div className="mt-5 space-y-3">
-              {mode === "signup" && <Input placeholder="Display name" value={name} onChange={(e) => setName(e.target.value)} />}
+              {mode === "signup" && (
+                <>
+                  <Input placeholder="Display name" value={name} onChange={(e) => setName(e.target.value)} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <div><label className="mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Date of birth</label><Input type="date" value={dob} onChange={(e) => setDob(e.target.value)} /></div>
+                    <div><label className="mb-1 block text-[11px] uppercase tracking-widest text-muted-foreground">Weight (kg)</label><Input type="number" min="20" max="250" value={weight} onChange={(e) => setWeight(e.target.value)} placeholder="70" /></div>
+                  </div>
+                  <p className="rounded-lg border border-border bg-muted/40 p-2 text-[11px] leading-relaxed text-muted-foreground">🔒 Your date of birth and weight stay on your account and are <span className="font-semibold text-foreground">never shared with third parties</span>. We only use them to personalize calories, pace zones and recommendations.</p>
+                </>
+              )}
               <Input type="email" placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
               <Input type="password" placeholder="Password (6+ chars)" value={password} onChange={(e) => setPassword(e.target.value)} />
               <Button className="w-full rounded-xl" onClick={submit} disabled={loading}>{loading ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}</Button>
