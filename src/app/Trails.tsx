@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { MapContainer, TileLayer, Polyline, Marker, Popup, CircleMarker, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
-import { Map as MapIcon, MapPin, Save, Trash2, Play, Square, Eye, EyeOff, Route, Locate, Share2, Repeat, Sparkles, Pencil, Crosshair } from "lucide-react";
+import { Map as MapIcon, MapPin, Save, Trash2, Play, Square, Eye, EyeOff, Route, Locate, Share2, Repeat, Sparkles, Pencil, Crosshair, Footprints } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -208,7 +208,12 @@ export default function Trails() {
         <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
           <div className="relative h-[560px]">
             <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }} scrollWheelZoom>
-              <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> · CARTO'
+                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                subdomains="abcd"
+                maxZoom={20}
+              />
               <FlyTo center={center} />
               {previewPts.length > 1 && <FitBounds pts={previewPts} />}
               <ClickCapture enabled={drawMode && !tracking} onClick={(p) => setDraft((d) => [...d, p])} />
@@ -224,7 +229,8 @@ export default function Trails() {
               {draft.map((p, i) => <CircleMarker key={i} center={p} radius={4} pathOptions={{ color: "hsl(var(--accent))", fillOpacity: 1 }} />)}
               {previewPts.length > 1 && (
                 <>
-                  <Polyline positions={previewPts} pathOptions={{ color: "#f43f5e", weight: 5 }} />
+                  <Polyline positions={previewPts} pathOptions={{ color: "#22d3ee", weight: 5, opacity: 0.95 }} />
+                  <Polyline positions={previewPts} pathOptions={{ color: "#22d3ee", weight: 14, opacity: 0.18 }} />
                   <Marker position={previewPts[0]}><Popup>Start · {activeTrail?.name}</Popup></Marker>
                   <Marker position={previewPts[previewPts.length - 1]}><Popup>Finish · {Number(activeTrail?.distance_km).toFixed(2)} km</Popup></Marker>
                 </>
@@ -252,6 +258,11 @@ export default function Trails() {
               {tracking ? "🔴 GPS recording…" : draft.length ? `Drafting · ${draft.length} pts · ${draftDist.toFixed(2)} km` : activeTrail ? `Previewing · ${activeTrail.name}` : "Toggle Draw to plot a trail, or Start GPS to record one"}
             </span>
             <div className="flex gap-2">
+              {activeTrail && !tracking && (
+                <Button size="sm" className="rounded-xl bg-emerald-500 text-black hover:bg-emerald-400" onClick={startTracking}>
+                  <Footprints className="h-3 w-3" /> Run this trail
+                </Button>
+              )}
               {activeTrail && <Button size="sm" variant="ghost" onClick={() => setActiveTrail(null)}>Clear preview</Button>}
               {draft.length > 0 && <Button size="sm" variant="ghost" onClick={() => setDraft([])}><Trash2 className="h-3 w-3" /> Clear draft</Button>}
             </div>
