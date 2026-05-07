@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 
-type Run = { route_name: string; distance_km: number; duration_seconds: number; avg_pace_seconds: number; avg_heart_rate: number | null; effort: number; run_at: string; notes?: string | null; elevation_m?: number; calories?: number | null; cadence?: number | null };
+type Run = { route_name: string; distance_km: number; duration_seconds: number; avg_pace_seconds: number; avg_heart_rate: number | null; effort: number; run_at: string; notes?: string | null; elevation_m?: number; calories?: number | null; cadence?: number | null; step_count?: number | null };
 
 const fmtPace = (s: number) => `${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,"0")}`;
 const fmtDur = (s: number) => `${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m`;
@@ -92,6 +92,7 @@ export function exportSingleRunPdf(run: Run & { notes?: string | null; elevation
     ["Effort", `${run.effort}/10`],
     ["Heart rate", run.avg_heart_rate ? `${run.avg_heart_rate} bpm` : "—"],
     ["Elevation", `${run.elevation_m || 0} m`],
+    ["Steps", `${(run.step_count ?? Math.round(km*1350)).toLocaleString()}`],
     ["Calories", run.calories ? String(run.calories) : "—"],
     ["Load", `${(run.effort * km).toFixed(0)}`],
   ];
