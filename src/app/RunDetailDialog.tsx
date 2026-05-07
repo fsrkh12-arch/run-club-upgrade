@@ -1,6 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
-import { Activity, HeartPulse, Mountain, Flame, Clock, Gauge, Zap } from "lucide-react";
+import { Activity, HeartPulse, Mountain, Flame, Clock, Gauge, Zap, FileDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { exportSingleRunPdf } from "@/lib/pdf-export";
 
 type Run = { id: string; route_name: string; distance_km: number; duration_seconds: number; avg_pace_seconds: number; avg_heart_rate: number | null; effort: number; run_at: string; notes: string | null; elevation_m: number; calories: number | null; cadence: number | null; track_points?: any };
 
@@ -30,8 +32,15 @@ export default function RunDetailDialog({ run, onOpenChange }: { run: Run | null
     <Dialog open={!!run} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">{run.route_name}</DialogTitle>
-          <p className="text-sm text-muted-foreground">{new Date(run.run_at).toLocaleString()}</p>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <DialogTitle className="text-2xl">{run.route_name}</DialogTitle>
+              <p className="text-sm text-muted-foreground">{new Date(run.run_at).toLocaleString()}</p>
+            </div>
+            <Button size="sm" variant="outline" onClick={() => exportSingleRunPdf(run as any)} className="rounded-xl">
+              <FileDown className="h-4 w-4" /> Export PDF
+            </Button>
+          </div>
         </DialogHeader>
 
         <div className="grid gap-3 sm:grid-cols-4">
