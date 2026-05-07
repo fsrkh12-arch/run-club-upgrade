@@ -118,7 +118,7 @@ export function exportSingleRunPdf(run: Run & { notes?: string | null; elevation
   if (run.notes) {
     doc.setTextColor(15); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text("Notes", 40, 540);
     doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(60);
-    doc.text(doc.splitTextToSize(run.notes, W - 80), 40, 558);
+    doc.text(doc.splitTextToSize(run.notes, W - 80) as any, 40, 558);
   }
 
   doc.save(`run-${run.route_name.replace(/\s+/g,"-").toLowerCase()}-${new Date(run.run_at).toISOString().slice(0,10)}.pdf`);
