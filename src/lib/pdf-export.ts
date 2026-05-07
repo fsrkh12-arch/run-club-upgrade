@@ -1,6 +1,6 @@
 import jsPDF from "jspdf";
 
-type Run = { route_name: string; distance_km: number; duration_seconds: number; avg_pace_seconds: number; avg_heart_rate: number | null; effort: number; run_at: string };
+type Run = { route_name: string; distance_km: number; duration_seconds: number; avg_pace_seconds: number; avg_heart_rate: number | null; effort: number; run_at: string; notes?: string | null; elevation_m?: number; calories?: number | null; cadence?: number | null };
 
 const fmtPace = (s: number) => `${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,"0")}`;
 const fmtDur = (s: number) => `${Math.floor(s/3600)}h ${Math.floor((s%3600)/60)}m`;
