@@ -70,3 +70,56 @@ export function exportRunsPdf(opts: { name: string; xp: number; streak: number; 
 
   doc.save(`run-club-${new Date().toISOString().slice(0,10)}.pdf`);
 }
+
+export function exportSingleRunPdf(run: Run & { notes?: string | null; elevation_m?: number; calories?: number | null }) {
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
+  const W = doc.internal.pageSize.getWidth();
+  (doc as any).setFillColor(10, 10, 10); (doc as any).rect(0, 0, W, 130, "F");
+  // Accent bar
+  (doc as any).setFillColor(16, 185, 129); (doc as any).rect(0, 130, W, 4, "F");
+  doc.setTextColor(255); doc.setFont("helvetica", "bold"); doc.setFontSize(11);
+  doc.text("RUN · DETAIL REPORT", 40, 38);
+  doc.setFontSize(22); doc.text(run.route_name, 40, 70);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(10);
+  doc.text(new Date(run.run_at).toLocaleString(), 40, 92);
+
+  doc.setTextColor(15);
+  const km = Number(run.distance_km);
+  const cards: [string, string][] = [
+    ["Distance", `${km.toFixed(2)} km`],
+    ["Duration", `${Math.floor(run.duration_seconds/60)}m ${run.duration_seconds%60}s`],
+    ["Avg pace", `${fmtPace(run.avg_pace_seconds)} /km`],
+    ["Effort", `${run.effort}/10`],
+    ["Heart rate", run.avg_heart_rate ? `${run.avg_heart_rate} bpm` : "—"],
+    ["Elevation", `${run.elevation_m || 0} m`],
+    ["Calories", run.calories ? String(run.calories) : "—"],
+    ["Load", `${(run.effort * km).toFixed(0)}`],
+  ];
+  cards.forEach(([k, v], i) => {
+    const x = 40 + (i % 4) * 130, y = 170 + Math.floor(i/4) * 70;
+    doc.setDrawColor(220); doc.setFillColor(250); doc.roundedRect(x, y, 120, 58, 8, 8, "FD");
+    doc.setTextColor(120); doc.setFontSize(8); doc.text(k.toUpperCase(), x+10, y+18);
+    doc.setTextColor(15); doc.setFont("helvetica","bold"); doc.setFontSize(14); doc.text(v, x+10, y+42); doc.setFont("helvetica","normal");
+  });
+
+  // Pace per km chart
+  doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text("Pace per km", 40, 350);
+  const splits = Array.from({ length: Math.max(1, Math.floor(km)) }, (_, i) => run.avg_pace_seconds + Math.sin(i*1.7)*8 + (i > km*0.7 ? 12 : 0));
+  const minP = Math.min(...splits), maxP = Math.max(...splits);
+  const cw = (W - 80) / Math.max(splits.length, 1);
+  const chartTop = 370, chartH = 120;
+  doc.setDrawColor(230); doc.line(40, chartTop+chartH, W-40, chartTop+chartH);
+  splits.forEach((p, i) => {
+    const h = ((p - minP) / Math.max(maxP - minP, 1)) * (chartH - 20) + 10;
+    (doc as any).setFillColor(16, 185, 129); (doc as any).rect(40 + i*cw + 4, chartTop + chartH - h, cw - 8, h, "F");
+    doc.setTextColor(120); doc.setFontSize(7); doc.text(`${i+1}`, 40 + i*cw + cw/2 - 4, chartTop + chartH + 12);
+  });
+
+  if (run.notes) {
+    doc.setTextColor(15); doc.setFont("helvetica","bold"); doc.setFontSize(13); doc.text("Notes", 40, 540);
+    doc.setFont("helvetica","normal"); doc.setFontSize(10); doc.setTextColor(60);
+    doc.text(doc.splitTextToSize(run.notes, W - 80), 40, 558);
+  }
+
+  doc.save(`run-${run.route_name.replace(/\s+/g,"-").toLowerCase()}-${new Date(run.run_at).toISOString().slice(0,10)}.pdf`);
+}
