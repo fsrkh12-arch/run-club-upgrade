@@ -32,17 +32,32 @@ export default function SettingsPage() {
   const [handle, setHandle] = useState(profile?.handle || "");
   const [city, setCity] = useState(profile?.city || "");
   const [bio, setBio] = useState("");
+  const [weight, setWeight] = useState<string>("");
+  const [height, setHeight] = useState<string>("");
+  const [dob, setDob] = useState<string>("");
 
   useEffect(() => { setName(profile?.display_name || ""); setHandle(profile?.handle || ""); setCity(profile?.city || ""); }, [profile]);
   useEffect(() => { (async () => {
-    const { data } = await supabase.from("profiles").select("bio").eq("user_id", session.user.id).maybeSingle();
-    if (data?.bio) setBio(data.bio);
+    const { data } = await supabase.from("profiles").select("bio, weight_kg, height_cm, dob").eq("user_id", session.user.id).maybeSingle();
+    if (data) {
+      if (data.bio) setBio(data.bio);
+      if (data.weight_kg != null) setWeight(String(data.weight_kg));
+      if (data.height_cm != null) setHeight(String(data.height_cm));
+      if (data.dob) setDob(data.dob);
+    }
   })(); }, [session]);
 
   const toggleDay = (d: string) => update({ preferred_run_days: settings.preferred_run_days.includes(d) ? settings.preferred_run_days.filter(x=>x!==d) : [...settings.preferred_run_days, d] });
 
   const saveProfile = async () => {
-    const { error } = await supabase.from("profiles").update({ display_name: name, handle, city, bio, weekly_km_goal: settings.weekly_km_goal, avatar_initials: name.slice(0,2).toUpperCase() }).eq("user_id", session.user.id);
+    const { error } = await supabase.from("profiles").update({
+      display_name: name, handle, city, bio,
+      weekly_km_goal: settings.weekly_km_goal,
+      avatar_initials: name.slice(0,2).toUpperCase(),
+      weight_kg: weight ? Number(weight) : null,
+      height_cm: height ? Number(height) : null,
+      dob: dob || null,
+    }).eq("user_id", session.user.id);
     if (error) return toast.error(error.message);
     toast.success(t("saved")); refreshProfile();
   };
@@ -70,7 +85,11 @@ export default function SettingsPage() {
         <Field label={t("display_name")}><Input value={name} onChange={(e)=>setName(e.target.value)} /></Field>
         <Field label={t("handle")}><Input value={handle} onChange={(e)=>setHandle(e.target.value)} /></Field>
         <Field label={t("city")}><Input value={city} onChange={(e)=>setCity(e.target.value)} /></Field>
-        <Field label={t("bio")} full><Textarea value={bio} onChange={(e)=>setBio(e.target.value)} /></Field>
+        <Field label="Date of birth"><Input type="date" value={dob} onChange={(e)=>setDob(e.target.value)} /></Field>
+        <Field label="Weight (kg)"><Input type="number" min="20" max="250" step="0.1" value={weight} onChange={(e)=>setWeight(e.target.value)} placeholder="70" /></Field>
+        <Field label="Height (cm)"><Input type="number" min="80" max="250" value={height} onChange={(e)=>setHeight(e.target.value)} placeholder="175" /></Field>
+        <Field label="Bio" full><Textarea value={bio} onChange={(e)=>setBio(e.target.value)} /></Field>
+        <div className="sm:col-span-2 -mt-2 rounded-lg border border-border bg-muted/30 p-3 text-[11px] text-muted-foreground">🔒 Your weight, height and date of birth are <span className="font-semibold text-foreground">private</span> — used only to refine calorie burn and pace zones. Never shared with third parties.</div>
       </Section>
 
       <Section icon={Shield} title={t("privacy")}>
@@ -145,7 +164,7 @@ export default function SettingsPage() {
             <AlertDialogTrigger asChild>
               <Button variant="destructive" className="mt-4"><X className="h-4 w-4" /> {t("quit")}</Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="overflow-hidden border-0 bg-transparent p-0 shadow-2xl sm:max-w-lg">
+            <AlertDialogContent className="overflow-hidden border-0 bg-transparent p-0 shadow-2xl w-[95vw] max-w-2xl sm:max-w-2xl">
               <div className="relative rounded-2xl border border-border/60 bg-background/95 p-7 backdrop-blur-xl">
                 {/* glow rings */}
                 <div className="pointer-events-none absolute inset-0 rounded-2xl">
