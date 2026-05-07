@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
-import { User, Shield, Bell, Palette, Ruler, Globe, Save, X, Check } from "lucide-react";
+import { User, Shield, Bell, Palette, Ruler, Globe, Save, X, Check, AlertTriangle, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -136,24 +136,53 @@ export default function SettingsPage() {
         </Field>
       </Section>
 
-      <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-6">
-        <h3 className="flex items-center gap-2 font-semibold text-destructive">{t("quit")}</h3>
-        <p className="mt-1 text-sm text-muted-foreground">{t("quit_desc")}</p>
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button variant="destructive" className="mt-4"><X className="h-4 w-4" /> {t("quit")}</Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>{t("quit_confirm_title")}</AlertDialogTitle>
-              <AlertDialogDescription>{t("quit_confirm_body")}</AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter className="gap-2 sm:gap-2">
-              <AlertDialogCancel className="bg-emerald-600 text-white hover:bg-emerald-700 border-emerald-600"><Check className="h-4 w-4" /> {t("quit_no")}</AlertDialogCancel>
-              <AlertDialogAction onClick={quit} className="bg-destructive text-destructive-foreground hover:bg-destructive/90"><X className="h-4 w-4" /> {t("quit_yes")}</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+      <div className="relative overflow-hidden rounded-2xl border border-destructive/40 bg-gradient-to-br from-destructive/10 via-background to-background p-6">
+        <div className="pointer-events-none absolute -top-20 -right-20 h-60 w-60 rounded-full bg-destructive/20 blur-3xl" />
+        <div className="relative">
+          <h3 className="flex items-center gap-2 font-semibold text-destructive"><AlertTriangle className="h-4 w-4" /> {t("quit")}</h3>
+          <p className="mt-1 text-sm text-muted-foreground">{t("quit_desc")}</p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="mt-4"><X className="h-4 w-4" /> {t("quit")}</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="overflow-hidden border-0 bg-transparent p-0 shadow-2xl sm:max-w-lg">
+              <div className="relative rounded-2xl border border-border/60 bg-background/95 p-7 backdrop-blur-xl">
+                {/* glow rings */}
+                <div className="pointer-events-none absolute inset-0 rounded-2xl">
+                  <div className="absolute -top-24 left-1/2 h-48 w-48 -translate-x-1/2 rounded-full bg-destructive/30 blur-3xl" />
+                  <div className="absolute bottom-0 right-0 h-32 w-32 rounded-full bg-emerald-500/20 blur-3xl" />
+                </div>
+                <div className="relative">
+                  <div className="mb-4 flex items-center gap-3">
+                    <div className="grid h-11 w-11 place-items-center rounded-xl border border-destructive/40 bg-destructive/10 text-destructive">
+                      <AlertTriangle className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <div className="font-mono-tech text-[10px] uppercase tracking-[0.2em] text-destructive">// terminal warning</div>
+                      <AlertDialogTitle className="text-xl font-semibold tracking-tight">{t("quit_confirm_title")}</AlertDialogTitle>
+                    </div>
+                  </div>
+                  <AlertDialogDescription className="text-sm leading-relaxed text-muted-foreground">
+                    {t("quit_confirm_body")}
+                  </AlertDialogDescription>
+                  <div className="mt-4 grid grid-cols-3 gap-2 rounded-xl border border-border/60 bg-muted/30 p-3 font-mono-tech text-[10px] uppercase tracking-widest text-muted-foreground">
+                    <div className="text-center"><div className="text-base font-semibold text-foreground">{profile?.xp ?? 0}</div>XP</div>
+                    <div className="text-center"><div className="text-base font-semibold text-foreground">{profile?.streak_days ?? 0}d</div>streak</div>
+                    <div className="text-center"><div className="text-base font-semibold text-foreground">∞</div>memories</div>
+                  </div>
+                  <AlertDialogFooter className="mt-6 flex-col-reverse gap-2 sm:flex-row sm:gap-2">
+                    <AlertDialogAction onClick={quit} className="group relative overflow-hidden rounded-xl border border-destructive/50 bg-destructive/10 text-destructive hover:bg-destructive hover:text-destructive-foreground sm:flex-1">
+                      <X className="h-4 w-4" /> {t("quit_yes")}
+                    </AlertDialogAction>
+                    <AlertDialogCancel className="group relative m-0 overflow-hidden rounded-xl border-0 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30 hover:from-emerald-400 hover:to-emerald-500 hover:text-white sm:flex-1">
+                      <Zap className="h-4 w-4" /> {t("quit_no")}
+                    </AlertDialogCancel>
+                  </AlertDialogFooter>
+                </div>
+              </div>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
     </div>
   );
