@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Plus, Users, Hash, Search, ArrowLeft } from "lucide-react";
+import { Send, Plus, Users, Hash, Search, ArrowLeft, Swords, Check, Lock, Flame, Sparkles, Trophy } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import SideQuests from "./SideQuests";
 
 type Community = { id: string; slug: string; name: string; description: string | null; emoji: string; city: string | null; is_official: boolean };
 type Membership = { community_id: string };
@@ -17,6 +19,7 @@ type ProfileLite = { user_id: string; display_name: string; avatar_initials: str
 
 export default function Communities() {
   const { session, profile } = useOutletContext<any>();
+  const [view, setView] = useState<"chat" | "quests">("chat");
   const [communities, setCommunities] = useState<Community[]>([]);
   const [memberships, setMemberships] = useState<Set<string>>(new Set());
   const [active, setActive] = useState<Community | null>(null);
@@ -87,6 +90,15 @@ export default function Communities() {
 
   return (
     <div className="mx-auto max-w-[1500px] p-4 md:p-6">
+      <div className="mb-4">
+        <Tabs value={view} onValueChange={(v)=>setView(v as any)}>
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="chat"><Users className="mr-1 h-3.5 w-3.5" /> Crews</TabsTrigger>
+            <TabsTrigger value="quests"><Swords className="mr-1 h-3.5 w-3.5" /> Side Quests</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+      {view === "quests" ? <SideQuests session={session} /> : (
       <div className="grid gap-4 lg:grid-cols-[340px_1fr]">
         <aside className={cn("space-y-4", active && "hidden lg:block")}>
           <div className="rounded-2xl border border-border bg-card p-4">
@@ -155,6 +167,7 @@ export default function Communities() {
           )}
         </main>
       </div>
+      )}
     </div>
   );
 }
