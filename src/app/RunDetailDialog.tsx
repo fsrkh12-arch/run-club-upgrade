@@ -1,10 +1,10 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LineChart, Line, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
-import { Activity, HeartPulse, Mountain, Flame, Clock, Gauge, Zap, FileDown } from "lucide-react";
+import { Activity, HeartPulse, Mountain, Flame, Clock, Gauge, Zap, FileDown, Footprints } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { exportSingleRunPdf } from "@/lib/pdf-export";
 
-type Run = { id: string; route_name: string; distance_km: number; duration_seconds: number; avg_pace_seconds: number; avg_heart_rate: number | null; effort: number; run_at: string; notes: string | null; elevation_m: number; calories: number | null; cadence: number | null; track_points?: any };
+type Run = { id: string; route_name: string; distance_km: number; duration_seconds: number; avg_pace_seconds: number; avg_heart_rate: number | null; effort: number; run_at: string; notes: string | null; elevation_m: number; calories: number | null; cadence: number | null; step_count?: number | null; track_points?: any };
 
 const fmtPace = (s: number) => `${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,"0")}`;
 const fmtDur = (s: number) => { const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60; return h ? `${h}h ${m}m` : `${m}m ${sec}s`; };
@@ -57,9 +57,10 @@ export default function RunDetailDialog({ run, onOpenChange }: { run: Run | null
           ))}
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-4">
           <div className="rounded-xl border border-border bg-card p-3"><div className="flex items-center gap-1 text-muted-foreground text-xs"><HeartPulse className="h-3 w-3" /> Avg HR</div><div className="mt-1 text-base font-semibold">{run.avg_heart_rate || "—"} bpm</div></div>
           <div className="rounded-xl border border-border bg-card p-3"><div className="flex items-center gap-1 text-muted-foreground text-xs"><Mountain className="h-3 w-3" /> Elevation</div><div className="mt-1 text-base font-semibold">{run.elevation_m} m</div></div>
+          <div className="rounded-xl border border-border bg-card p-3"><div className="flex items-center gap-1 text-muted-foreground text-xs"><Footprints className="h-3 w-3" /> Steps</div><div className="mt-1 text-base font-semibold">{(run.step_count ?? Math.round(km*1350)).toLocaleString()}</div></div>
           <div className="rounded-xl border border-border bg-card p-3"><div className="flex items-center gap-1 text-muted-foreground text-xs"><Flame className="h-3 w-3" /> Calories</div><div className="mt-1 text-base font-semibold">{run.calories || "—"}</div></div>
         </div>
 
