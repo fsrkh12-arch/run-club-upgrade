@@ -97,7 +97,7 @@ export function exportSingleRunPdf(run: Run & { notes?: string | null; elevation
   ];
   cards.forEach(([k, v], i) => {
     const x = 40 + (i % 4) * 130, y = 170 + Math.floor(i/4) * 70;
-    doc.setDrawColor(220); doc.setFillColor(250); doc.roundedRect(x, y, 120, 58, 8, 8, "FD");
+    doc.setDrawColor(220); doc.setFillColor(250, 250, 250); doc.roundedRect(x, y, 120, 58, 8, 8, "FD");
     doc.setTextColor(120); doc.setFontSize(8); doc.text(k.toUpperCase(), x+10, y+18);
     doc.setTextColor(15); doc.setFont("helvetica","bold"); doc.setFontSize(14); doc.text(v, x+10, y+42); doc.setFont("helvetica","normal");
   });
