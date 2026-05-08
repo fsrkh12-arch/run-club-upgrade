@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Activity, Flame, HeartPulse, Plus, Route, Trophy, Target, Mountain, Clock, Gauge, FileDown, ChevronRight, Footprints, Zap, Sparkles } from "lucide-react";
+import { Activity, Flame, HeartPulse, Plus, Route, Trophy, Target, Mountain, Clock, Gauge, FileDown, ChevronRight, Footprints, Zap, Sparkles, Play } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -25,6 +25,7 @@ const fmtDur = (s: number) => { const h = Math.floor(s/3600), m = Math.floor((s%
 
 export default function Dashboard() {
   const { session, profile, refreshProfile } = useOutletContext<any>();
+  const nav = useNavigate();
   const { t, settings } = useSettings();
   const unit = settings.units === "imperial" ? "mi" : "km";
   const conv = (km: number) => settings.units === "imperial" ? km * 0.621371 : km;
@@ -110,6 +111,9 @@ export default function Dashboard() {
               <div className="flex items-baseline gap-1 text-4xl font-semibold tabular-nums">L{level}<span className="text-sm opacity-60">·{xp.toLocaleString()} XP</span></div>
               <div className="font-mono-tech text-xs opacity-60">🔥 {streak}d streak · ×{mult.toFixed(2)} XP</div>
             </div>
+            <Button onClick={() => nav("/app/run?start=1")} size="lg" className="rounded-xl bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] hover:opacity-90">
+              <Play className="h-4 w-4" /> Start GPS run
+            </Button>
           </div>
         </div>
         <div className="relative mt-6 space-y-3">
