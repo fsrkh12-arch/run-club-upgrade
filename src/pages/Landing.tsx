@@ -1,26 +1,12 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Activity, BarChart3, Users, Trophy, Shield, Sparkles, MessageCircle, Map, Heart, Zap, ChevronRight, Play, Star, Gauge } from "lucide-react";
+import { Activity, BarChart3, Users, Trophy, Shield, Sparkles, Heart, Zap, ChevronRight, Play, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
 const fade = (delay = 0) => ({ initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.6, delay } });
 
-const features = [
-  { icon: Activity, title: "Smart run tracking", body: "GPS, pace, heart rate, cadence and elevation captured automatically with sub-second precision." },
-  { icon: BarChart3, title: "Deep analytics", body: "VDOT, training load, weekly periodization charts and AI-powered form insights." },
-  { icon: Users, title: "Real communities", body: "Join clubs by city, pace or vibe. Send messages, plan meetups, run together." },
-  { icon: Trophy, title: "Live leaderboards", body: "Compete on the global board or just within your communities. XP, streaks, badges." },
-  { icon: Heart, title: "Health-first", body: "Recovery scores, HRV trends, injury risk flags. Train smarter, not just harder." },
-  { icon: Shield, title: "You own your data", body: "Granular privacy. Make every run public, friends-only, or strictly private." },
-];
-
-const policies = [
-  { title: "Privacy by default", body: "Your runs are private until you choose to share. Location data is fuzzed for public posts." },
-  { title: "No ads, ever", body: "We don't sell attention. The product is the product." },
-  { title: "Open data export", body: "Export every run as GPX/FIT/CSV anytime. Your training history belongs to you." },
-  { title: "Safety first", body: "Live location sharing for solo runs, panic button, and verified community moderators." },
-];
+// Section content lives on dedicated routes (/features, /community, /policies, /download).
 
 function PhonePreview() {
   const [tab, setTab] = useState(0);
