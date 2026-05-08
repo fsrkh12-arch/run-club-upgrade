@@ -144,84 +144,25 @@ export default function Landing() {
       </section>
 
       {/* FEATURES */}
-      <section id="features" className="border-b border-border bg-muted/30">
-        <div className="mx-auto max-w-7xl px-6 py-24">
-          <motion.div {...fade(0)} className="max-w-2xl">
-            <div className="font-mono-tech text-xs uppercase tracking-widest text-muted-foreground">Why us</div>
-            <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">Everything a runner needs. Nothing they don't.</h2>
-          </motion.div>
-          <div className="mt-16 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((f, i) => (
-              <motion.div key={f.title} {...fade(i*0.05)} whileHover={{ y: -4 }} className="group rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-lg">
-                <div className="mb-5 grid h-11 w-11 place-items-center rounded-xl bg-primary text-primary-foreground transition-transform group-hover:scale-110"><f.icon className="h-5 w-5" /></div>
-                <h3 className="text-lg font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{f.body}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* COMMUNITY */}
-      <section id="community" className="border-b border-border">
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 py-24 lg:grid-cols-2">
-          <motion.div {...fade(0)}>
-            <div className="font-mono-tech text-xs uppercase tracking-widest text-muted-foreground">Community</div>
-            <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">Find your people. Run with them.</h2>
-            <p className="mt-6 text-lg text-muted-foreground">Join sub-communities by city, pace, distance, or trail style. Chat in real time, plan meetups, and compete on a leaderboard that's only your crew.</p>
-            <div className="mt-8 space-y-3">
-              {[[MessageCircle,"Real-time group chat"],[Trophy,"Per-community leaderboards"],[Map,"Plan meetups & shared routes"],[Gauge,"XP from runs + daily streaks"]].map(([I, t]: any) => (
-                <div key={t} className="flex items-center gap-3"><div className="grid h-9 w-9 place-items-center rounded-lg border border-border bg-card"><I className="h-4 w-4" /></div><span className="font-medium">{t}</span></div>
-              ))}
-            </div>
-          </motion.div>
-          <motion.div {...fade(0.2)} className="space-y-3">
+      <section className="border-b border-border bg-muted/30">
+        <div className="mx-auto max-w-7xl px-6 py-20">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {[
-              { e: "🌅", n: "Baku Dawn Patrol", m: "248 members · active now", c: "5 sunrise runs scheduled this week" },
-              { e: "🏔️", n: "Trail Collective", m: "1,247 members", c: "Weekend ridge run — 12K elevation gain" },
-              { e: "🥇", n: "Marathon Makers", m: "892 members", c: "16-week Berlin block starts Monday" },
-              { e: "🌱", n: "5K Starters", m: "412 members", c: "Welcome thread: 18 new runners this week" },
+              { to: "/features", icon: Activity, title: "Features", body: "GPS, analytics, XP, quests — explore the full toolkit.", cta: "See features" },
+              { to: "/community", icon: Users, title: "Community", body: "Real clubs, real chat, real leaderboards.", cta: "Meet the crews" },
+              { to: "/policies", icon: Shield, title: "Policies", body: "Privacy, data ownership, safety — in plain English.", cta: "Read policies" },
+              { to: "/download", icon: Play, title: "Download", body: "iOS, Android, Web. Free forever.", cta: "Get the app" },
             ].map((c, i) => (
-              <motion.div key={c.n} initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i*0.08 }} whileHover={{ x: -4 }} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-5">
-                <div className="grid h-14 w-14 place-items-center rounded-xl bg-muted text-2xl">{c.e}</div>
-                <div className="flex-1"><div className="font-semibold">{c.n}</div><div className="text-xs text-muted-foreground">{c.m}</div><div className="mt-1 text-sm">{c.c}</div></div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* POLICIES */}
-      <section id="policies" className="border-b border-border bg-primary text-primary-foreground">
-        <div className="mx-auto max-w-7xl px-6 py-24">
-          <motion.div {...fade(0)} className="max-w-2xl">
-            <div className="font-mono-tech text-xs uppercase tracking-widest opacity-60">Our policies</div>
-            <h2 className="mt-3 text-4xl font-semibold tracking-tight md:text-5xl">Promises we put in writing.</h2>
-          </motion.div>
-          <div className="mt-16 grid gap-px overflow-hidden rounded-2xl bg-primary-foreground/10 md:grid-cols-2">
-            {policies.map((p, i) => (
-              <motion.div key={p.title} {...fade(i*0.08)} className="bg-primary p-8">
-                <Shield className="mb-4 h-5 w-5" />
-                <h3 className="text-xl font-semibold">{p.title}</h3>
-                <p className="mt-2 text-sm opacity-70">{p.body}</p>
+              <motion.div key={c.title} {...fade(i*0.05)} whileHover={{ y: -4 }}>
+                <Link to={c.to} className="group block h-full rounded-2xl border border-border bg-card p-6 transition-shadow hover:shadow-lg">
+                  <div className="mb-5 grid h-11 w-11 place-items-center rounded-xl bg-primary text-primary-foreground transition-transform group-hover:scale-110"><c.icon className="h-5 w-5" /></div>
+                  <h3 className="text-lg font-semibold">{c.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground">{c.body}</p>
+                  <div className="mt-4 inline-flex items-center gap-1 text-sm font-semibold">{c.cta} <ChevronRight className="h-3 w-3" /></div>
+                </Link>
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* DOWNLOAD */}
-      <section id="download" className="border-b border-border">
-        <div className="mx-auto max-w-7xl px-6 py-24 text-center">
-          <motion.div {...fade(0)}>
-            <h2 className="text-4xl font-semibold tracking-tight md:text-6xl">Start your first run.</h2>
-            <p className="mt-4 text-lg text-muted-foreground">Free forever. No ads. Your data stays yours.</p>
-            <div className="mt-10 flex flex-wrap justify-center gap-3">
-              <Link to="/auth"><Button size="lg" className="rounded-xl">Open in browser <ChevronRight className="h-4 w-4" /></Button></Link>
-              <Button size="lg" variant="outline" className="rounded-xl"><Apple className="h-4 w-4" /> App Store</Button>
-              <Button size="lg" variant="outline" className="rounded-xl"><Play className="h-4 w-4" /> Google Play</Button>
-            </div>
-          </motion.div>
         </div>
       </section>
 
