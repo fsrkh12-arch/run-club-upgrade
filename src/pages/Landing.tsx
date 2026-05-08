@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Activity, BarChart3, Users, Trophy, Shield, Sparkles, MessageCircle, Map, Heart, Zap, Apple, ChevronRight, Play, Star, Gauge } from "lucide-react";
+import { Activity, BarChart3, Users, Trophy, Shield, Sparkles, MessageCircle, Map, Heart, Zap, ChevronRight, Play, Star, Gauge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 
@@ -91,10 +91,10 @@ export default function Landing() {
           <div className="flex items-center gap-2"><div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground"><Zap className="h-4 w-4" /></div><span className="font-semibold tracking-tight">Run Club</span></div>
           <nav className="hidden items-center gap-8 text-sm md:flex">
             <a href="#mission" className="text-muted-foreground hover:text-foreground">Mission</a>
-            <a href="#features" className="text-muted-foreground hover:text-foreground">Features</a>
-            <a href="#community" className="text-muted-foreground hover:text-foreground">Community</a>
-            <a href="#policies" className="text-muted-foreground hover:text-foreground">Policies</a>
-            <a href="#download" className="text-muted-foreground hover:text-foreground">Download</a>
+            <Link to="/features" className="text-muted-foreground hover:text-foreground">Features</Link>
+            <Link to="/community" className="text-muted-foreground hover:text-foreground">Community</Link>
+            <Link to="/policies" className="text-muted-foreground hover:text-foreground">Policies</Link>
+            <Link to="/download" className="text-muted-foreground hover:text-foreground">Download</Link>
           </nav>
           <div className="flex items-center gap-2"><Link to="/auth"><Button variant="ghost" size="sm">Sign in</Button></Link><Link to="/auth"><Button size="sm">Get started</Button></Link></div>
         </div>
