@@ -4,6 +4,10 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Landing from "./pages/Landing";
+import LandingFeatures from "./pages/LandingFeatures";
+import LandingCommunity from "./pages/LandingCommunity";
+import LandingPolicies from "./pages/LandingPolicies";
+import LandingDownload from "./pages/LandingDownload";
 import Auth from "./pages/Auth";
 import AppLayout from "./app/AppLayout";
 import Dashboard from "./app/Dashboard";
@@ -24,10 +28,15 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />
+          <Route path="/features" element={<LandingFeatures />} />
+          <Route path="/community" element={<LandingCommunity />} />
+          <Route path="/policies" element={<LandingPolicies />} />
+          <Route path="/download" element={<LandingDownload />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/app" element={<AppLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="trails" element={<Trails />} />
+            <Route path="run" element={<Trails />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="communities" element={<Communities />} />
             <Route path="leaderboards" element={<Leaderboards />} />
