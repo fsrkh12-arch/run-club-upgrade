@@ -1,13 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Activity, Flame, HeartPulse, Plus, Route, Trophy, Target, Mountain, Clock, Gauge, FileDown, ChevronRight, Footprints, Zap, Sparkles, Play } from "lucide-react";
-import { z } from "zod";
+import { Activity, Flame, HeartPulse, Route, Trophy, Target, Mountain, Clock, Gauge, FileDown, ChevronRight, Footprints, Zap, Sparkles, Play, Satellite } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis, CartesianGrid, BarChart, Bar } from "recharts";
 import RunDetailDialog from "./RunDetailDialog";
@@ -17,9 +15,6 @@ import { useSettings } from "@/lib/settings-context";
 type Run = { id: string; route_name: string; distance_km: number; duration_seconds: number; avg_pace_seconds: number; avg_heart_rate: number | null; effort: number; run_at: string; notes: string | null; elevation_m: number; calories: number | null; cadence: number | null; step_count: number | null };
 type Goal = { id: string; title: string; target_value: number; current_value: number; unit: string; status: string };
 
-const schema = z.object({ route: z.string().trim().min(2).max(80), distance: z.coerce.number().min(0.1).max(200), duration: z.string().regex(/^\d{1,2}:\d{2}(:\d{2})?$/), hr: z.string().optional(), effort: z.coerce.number().min(1).max(10), notes: z.string().max(500).optional() });
-
-const parseDur = (v: string) => { const p = v.split(":").map(Number); return p.length === 3 ? p[0]*3600+p[1]*60+p[2] : p[0]*60+p[1]; };
 const fmtPace = (s?: number | null) => !s || !isFinite(s) ? "—" : `${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,"0")}`;
 const fmtDur = (s: number) => { const h = Math.floor(s/3600), m = Math.floor((s%3600)/60); return h ? `${h}h ${m}m` : `${m}m`; };
 
@@ -32,7 +27,6 @@ export default function Dashboard() {
 
   const [runs, setRuns] = useState<Run[]>([]);
   const [goals, setGoals] = useState<Goal[]>([]);
-  const [form, setForm] = useState({ route: "", distance: "5.0", duration: "27:30", hr: "152", effort: "6", notes: "" });
   const [goalForm, setGoalForm] = useState({ title: "Weekly distance", target: "40" });
   const [detail, setDetail] = useState<Run | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -68,15 +62,6 @@ export default function Dashboard() {
     return Object.entries(byWeek).slice(-8).map(([w, km]) => ({ w: w.slice(5), km: Number(conv(km).toFixed(1)) }));
   }, [runs, settings.units]);
 
-  const addRun = async () => {
-    const p = schema.safeParse({ ...form, route: form.route || "Untitled run" }); if (!p.success) return toast.error("Check the route, distance and time fields.");
-    const dur = parseDur(p.data.duration), dist = p.data.distance, pace = Math.round(dur/dist);
-    const steps = Math.round(dist * 1350);
-    const { error } = await supabase.from("runs").insert({ user_id: session.user.id, route_name: p.data.route, distance_km: dist, duration_seconds: dur, avg_pace_seconds: pace, avg_heart_rate: p.data.hr ? Number(p.data.hr) : null, effort: p.data.effort, calories: Math.round(dist*72), elevation_m: Math.round(dist*9), step_count: steps, notes: p.data.notes || null, visibility: settings.default_run_visibility });
-    if (error) return toast.error(error.message);
-    toast.success(`Run logged · +${Math.round(dist*10)+p.data.effort} XP`);
-    setForm(f=>({...f, notes:""})); load(); refreshProfile();
-  };
   const addGoal = async () => {
     const { error } = await supabase.from("goals").insert({ user_id: session.user.id, title: goalForm.title, target_value: Number(goalForm.target), unit: "km", current_value: 0 });
     if (error) return toast.error(error.message);
@@ -176,16 +161,20 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="rounded-2xl border border-border bg-card p-6">
-          <div className="flex items-center justify-between"><h2 className="text-lg font-semibold">{t("log_run")}</h2><Plus className="h-4 w-4 text-muted-foreground" /></div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
-            <Input value={form.route} onChange={(e)=>setForm({...form,route:e.target.value})} placeholder="Route name" />
-            <Input value={form.distance} onChange={(e)=>setForm({...form,distance:e.target.value})} placeholder={`${unit}`} />
-            <Input value={form.duration} onChange={(e)=>setForm({...form,duration:e.target.value})} placeholder="MM:SS" />
-            <Input value={form.hr} onChange={(e)=>setForm({...form,hr:e.target.value})} placeholder="HR" />
-            <Input value={form.effort} onChange={(e)=>setForm({...form,effort:e.target.value})} placeholder="Effort 1-10" className="sm:col-span-2" />
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Auto-log via GPS</h2>
+            <Satellite className="h-4 w-4 text-[hsl(var(--accent))]" />
           </div>
-          <Textarea className="mt-3" value={form.notes} onChange={(e)=>setForm({...form,notes:e.target.value})} placeholder="Notes…" />
-          <Button onClick={addRun} className="mt-3 w-full rounded-xl">{t("save_run")}</Button>
+          <p className="mt-2 text-sm text-muted-foreground">Manual entries are off — every run is captured live by GPS for sub-decimeter accuracy.</p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))]" /> Live distance, pace, speed & elevation</li>
+            <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))]" /> Kalman-style drift rejection &amp; jump filter</li>
+            <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))]" /> Calories &amp; steps from your weight + height</li>
+            <li className="flex items-center gap-2"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))]" /> Auto-saved with full GPS trace &amp; XP</li>
+          </ul>
+          <Button onClick={() => nav("/app/run?start=1")} className="mt-4 w-full rounded-xl bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] hover:opacity-90">
+            <Play className="h-4 w-4" /> Start GPS run
+          </Button>
         </div>
       </div>
 
