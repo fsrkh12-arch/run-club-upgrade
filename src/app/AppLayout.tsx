@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet, NavLink, useNavigate, Link } from "react-router-dom";
-import { Activity, Users, Trophy, Settings, LogOut, Zap, Flame, Map as MapIcon, Bell, Play } from "lucide-react";
+import { Activity, Users, Trophy, Settings, LogOut, Zap, Flame, Map as MapIcon, Bell, Footprints } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session } from "@supabase/supabase-js";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -68,6 +68,7 @@ export default function AppLayout() {
   const navItems = [
     { to: "/app", label: "Progress", icon: Activity, end: true },
     { to: "/app/trails", label: "Run", icon: MapIcon },
+    { to: "/app/sensors", label: "Sensors", icon: Footprints },
     { to: "/app/communities", label: "Communities", icon: Users },
     { to: "/app/leaderboards", label: "Leaderboards", icon: Trophy },
     { to: "/app/settings", label: "Settings", icon: Settings },
