@@ -90,11 +90,53 @@ export default function Trails() {
   const [search, setSearch] = useState("");
   const [sosOpen, setSosOpen] = useState(false);
 
+  // === Accelerometer / step counter (separate from map) ===
+  const [steps, setSteps] = useState(0);
+  const [cadence, setCadence] = useState(0);
+  const [motionMag, setMotionMag] = useState(0);
+  const [motionAvail, setMotionAvail] = useState<"unknown" | "ok" | "denied" | "absent">("unknown");
+  const lastStepAt = useRef(0);
+  const lastPeak = useRef(0);
+  const recentSteps = useRef<number[]>([]);
+
   const watchId = useRef<number | null>(null);
   const tickRef = useRef<number | null>(null);
   const lastTickRef = useRef<number>(0);
   const pausedRef = useRef(false);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
+
+  const motionHandler = (ev: DeviceMotionEvent) => {
+    if (pausedRef.current) return;
+    const a = ev.accelerationIncludingGravity || ev.acceleration;
+    if (!a) return;
+    const x = a.x ?? 0, y = a.y ?? 0, z = a.z ?? 0;
+    const mag = Math.sqrt(x*x + y*y + z*z);
+    setMotionMag(mag);
+    const now = performance.now();
+    const dt = now - lastStepAt.current;
+    // Adaptive peak detection: rising edge above 11.8 m/s², ≥280ms between steps (≈215 spm cap)
+    if (mag > 11.8 && lastPeak.current <= 11.0 && dt > 280) {
+      lastStepAt.current = now;
+      setSteps((s) => s + 1);
+      const arr = recentSteps.current; arr.push(now);
+      while (arr.length && now - arr[0] > 10000) arr.shift();
+      if (arr.length > 1) {
+        const span = (arr[arr.length-1] - arr[0]) / 1000;
+        setCadence(Math.round((arr.length - 1) / span * 60));
+      }
+    }
+    lastPeak.current = mag;
+  };
+  const requestMotion = async () => {
+    const DM: any = (window as any).DeviceMotionEvent;
+    if (!DM) { setMotionAvail("absent"); return; }
+    if (typeof DM.requestPermission === "function") {
+      try { const r = await DM.requestPermission(); if (r !== "granted") { setMotionAvail("denied"); return; } }
+      catch { setMotionAvail("denied"); return; }
+    }
+    window.addEventListener("devicemotion", motionHandler);
+    setMotionAvail("ok");
+  };
 
   const load = async () => {
     const [t, r] = await Promise.all([
@@ -135,8 +177,11 @@ export default function Trails() {
   const startRun = () => {
     if (!navigator.geolocation) return toast.error("Geolocation not available on this device");
     setSamples([]); setMovingSec(0); setElevGain(0); setInstSpeed(0);
+    setSteps(0); setCadence(0); setMotionMag(0);
+    lastStepAt.current = 0; lastPeak.current = 0; recentSteps.current = [];
     setTracking(true); setPaused(false);
     lastTickRef.current = performance.now();
+    requestMotion();
 
     // 1Hz timer for moving-time
     tickRef.current = window.setInterval(() => {
@@ -198,6 +243,7 @@ export default function Trails() {
     setTracking(false); setPaused(false);
     if (watchId.current != null) navigator.geolocation.clearWatch(watchId.current);
     if (tickRef.current != null) clearInterval(tickRef.current);
+    window.removeEventListener("devicemotion", motionHandler);
     watchId.current = null; tickRef.current = null;
 
     if (samples.length < 2) { toast.message("No movement captured"); return; }
@@ -205,10 +251,11 @@ export default function Trails() {
     const dist = totalDistKm(pts); // km
     const dur = movingSec > 5 ? Math.round(movingSec) : Math.round((samples[samples.length-1].t - samples[0].t)/1000);
     const pace = dist > 0 ? Math.round(dur / dist) : 0;
-    // Stride length estimate from height (Welk): 0.413 * h(cm), fallback 0.78 m
+    // Steps come from the device accelerometer (sensor); fall back to stride model only if sensor unavailable
     const h = Number(profile?.height_cm) || 170;
     const stride = 0.413 * h / 100;
-    const steps = Math.max(0, Math.round((dist * 1000) / stride));
+    const sensorSteps = steps;
+    const stepsFinal = sensorSteps > 5 ? sensorSteps : Math.max(0, Math.round((dist * 1000) / stride));
     // Calories — Pandolf-ish simplified: kcal = MET * weight(kg) * hours; MET ≈ 0.5 * speed(km/h)
     const w = Number(profile?.weight_kg) || 70;
     const speedKmh = dur ? (dist / (dur / 3600)) : 0;
@@ -228,7 +275,8 @@ export default function Trails() {
       avg_pace_seconds: pace,
       effort,
       elevation_m: Math.round(elevGain),
-      step_count: steps,
+      step_count: stepsFinal,
+      cadence: cadence || null,
       calories,
       track_points: { type: "LineString", coordinates: pts.map(p => [p[1], p[0]]) },
       trail_id: matched?.id || null,
@@ -239,7 +287,7 @@ export default function Trails() {
     const xpEst = Math.round(dist * 10) + effort;
     toast.success(`Run saved · ${dist.toFixed(2)} km · +${xpEst} XP`);
     setDraft(pts); setName(matched ? matched.name : `Trail ${new Date().toLocaleDateString()}`);
-    setSamples([]); setMovingSec(0); setElevGain(0); setInstSpeed(0);
+    setSamples([]); setMovingSec(0); setElevGain(0); setInstSpeed(0); setSteps(0); setCadence(0); setMotionMag(0);
     load(); refreshProfile?.();
   };
 
