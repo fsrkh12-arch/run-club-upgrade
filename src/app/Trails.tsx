@@ -150,37 +150,47 @@ export default function Trails() {
       (pos) => {
         if (pausedRef.current) return;
         const acc = pos.coords.accuracy ?? 30;
-        // Reject low-accuracy fixes (>30m) and crazy jumps
-        if (acc > 35) return;
-        const s: Sample = {
+        // Hard reject low-accuracy fixes — sub-decimeter targets need <=20m radius
+        if (acc > 25) { setAccuracy(acc); return; }
+        const raw: Sample = {
           lat: pos.coords.latitude, lng: pos.coords.longitude, t: pos.timestamp,
           acc, alt: pos.coords.altitude, speed: pos.coords.speed,
         };
         setSamples((prev) => {
           if (prev.length) {
             const last = prev[prev.length - 1];
-            const d = haversineM(last, s);
-            const dt = Math.max(0.001, (s.t - last.t) / 1000);
+            const d = haversineM(last, raw);
+            const dt = Math.max(0.001, (raw.t - last.t) / 1000);
             const v = d / dt;
-            // Discard impossible jumps (>10 m/s ≈ 36 km/h sprint cap unless dt small)
-            if (v > 12) return prev;
-            // Tiny GPS drift while standing still
-            if (d < acc * 0.5 && d < 4) return prev;
-            // Elevation gain (only positive, with 1m noise floor)
-            if (last.alt != null && s.alt != null && s.alt - last.alt > 1) {
-              setElevGain((e) => e + (s.alt! - last.alt!));
+            // Reject impossible jumps (>15 m/s ≈ 54 km/h — faster than any human)
+            if (v > 15) return prev;
+            // Stationary drift filter — scaled to combined accuracy
+            const drift = Math.max(2.5, (acc + last.acc) * 0.35);
+            if (d < drift) return prev;
+            // Accuracy-weighted Kalman-lite smoothing — pull noisy fixes toward last
+            const w = Math.min(0.6, last.acc / (last.acc + acc));
+            const sm: Sample = {
+              ...raw,
+              lat: raw.lat * (1 - w) + last.lat * w,
+              lng: raw.lng * (1 - w) + last.lng * w,
+            };
+            // Elevation gain — require both fixes accurate, 1.5m noise floor
+            if (last.alt != null && sm.alt != null && acc < 15 && last.acc < 15 && sm.alt - last.alt > 1.5) {
+              setElevGain((e) => e + (sm.alt! - last.alt!));
             }
             instSpeedRef.current = pos.coords.speed != null && pos.coords.speed >= 0 ? pos.coords.speed : v;
             setInstSpeed(instSpeedRef.current);
+            setMe([sm.lat, sm.lng]); setAccuracy(acc); setCenter([sm.lat, sm.lng]);
+            return [...prev, sm];
           }
-          return [...prev, s];
+          setMe([raw.lat, raw.lng]); setAccuracy(acc); setCenter([raw.lat, raw.lng]);
+          return [raw];
         });
-        setMe([s.lat, s.lng]); setAccuracy(acc); setCenter([s.lat, s.lng]);
       },
       (err) => toast.error(`GPS: ${err.message}`),
       { enableHighAccuracy: true, maximumAge: 0, timeout: 15000 }
     );
-    toast.success("GPS locked. Run away.");
+    toast.success("GPS locked · high-accuracy mode");
   };
   const instSpeedRef = useRef(0);
 
