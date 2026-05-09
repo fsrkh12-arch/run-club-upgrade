@@ -16,6 +16,7 @@ import Leaderboards from "./app/Leaderboards";
 import SettingsPage from "./app/Settings";
 import Trails from "./app/Trails";
 import NotificationsPage from "./app/Notifications";
+import Sensors from "./app/Sensors";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
             <Route index element={<Dashboard />} />
             <Route path="trails" element={<Trails />} />
             <Route path="run" element={<Trails />} />
+            <Route path="sensors" element={<Sensors />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="communities" element={<Communities />} />
             <Route path="leaderboards" element={<Leaderboards />} />
