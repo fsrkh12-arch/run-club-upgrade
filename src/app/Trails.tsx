@@ -428,9 +428,14 @@ export default function Trails() {
                       <Stat label="Pace" value={`${fmtPace(livePace)}/km`} icon={Gauge} />
                       <Stat label="Speed" value={`${liveSpeedKmh.toFixed(1)} km/h`} icon={Zap} />
                     </div>
-                    <div className="mt-2 grid grid-cols-2 gap-3 border-t border-border pt-2 text-[11px]">
-                      <div className="flex items-center gap-2 text-muted-foreground"><Flame className="h-3 w-3" /> Elev gain <span className="ml-auto font-mono-tech text-foreground">{Math.round(elevGain)} m</span></div>
-                      <div className="flex items-center gap-2 text-muted-foreground"><Footprints className="h-3 w-3" /> Steps <span className="ml-auto font-mono-tech text-foreground">{Math.max(0, Math.round(liveDistKm * 1000 / (0.413 * (Number(profile?.height_cm) || 170) / 100))).toLocaleString()}</span></div>
+                    <div className="mt-2 grid grid-cols-3 gap-3 border-t border-border pt-2 text-[11px]">
+                      <div className="flex items-center gap-2 text-muted-foreground"><Flame className="h-3 w-3" /> Elev <span className="ml-auto font-mono-tech text-foreground">{Math.round(elevGain)} m</span></div>
+                      <div className="flex items-center gap-2 text-muted-foreground"><Footprints className="h-3 w-3" /> Steps <span className="ml-auto font-mono-tech text-foreground">{steps.toLocaleString()}</span></div>
+                      <div className="flex items-center gap-2 text-muted-foreground"><Gauge className="h-3 w-3" /> Cad <span className="ml-auto font-mono-tech text-foreground">{cadence} spm</span></div>
+                    </div>
+                    <div className="mt-1 flex items-center justify-between font-mono-tech text-[9px] uppercase tracking-widest text-muted-foreground">
+                      <span>accel · {motionAvail === "ok" ? `${motionMag.toFixed(1)} m/s²` : motionAvail === "denied" ? "permission denied" : motionAvail === "absent" ? "no sensor" : "arming…"}</span>
+                      <span>steps via accelerometer</span>
                     </div>
                   </div>
                 </motion.div>
