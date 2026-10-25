@@ -13,6 +13,8 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Session } from "@supabase/supabase-js";
 
+const authRedirectTo = new URL(import.meta.env.BASE_URL, window.location.origin).toString();
+
 type Run = {
   id: string;
   route_name: string;
@@ -129,7 +131,7 @@ function AuthGate() {
     if (!email || password.length < 6) return toast.error("Use a valid email and 6+ character password.");
     setLoading(true);
     const result = mode === "signup"
-      ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } })
+      ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: authRedirectTo } })
       : await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (result.error) return toast.error(result.error.message);
@@ -137,7 +139,7 @@ function AuthGate() {
   };
 
   const google = async () => {
-    const result = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
+    const result = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: authRedirectTo } });
     if (result.error) toast.error(String(result.error.message || result.error));
   };
 

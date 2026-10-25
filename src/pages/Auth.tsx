@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
+const authRedirectTo = new URL(import.meta.env.BASE_URL, window.location.origin).toString();
+
 export default function Auth() {
   const nav = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -29,7 +31,7 @@ export default function Auth() {
     if (mode === "signup" && (!name || !dob || !weight)) return toast.error("Add your name, date of birth and weight to personalize your training.");
     setLoading(true);
     const r = mode === "signup"
-      ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin, data: { full_name: name || email.split("@")[0] } } })
+      ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: authRedirectTo, data: { full_name: name || email.split("@")[0] } } })
       : await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (r.error) return toast.error(r.error.message);
@@ -42,7 +44,7 @@ export default function Auth() {
   };
 
   const google = async () => {
-    const r = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin } });
+    const r = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: authRedirectTo } });
     if (r.error) toast.error(String(r.error.message || r.error));
   };
 
@@ -83,7 +85,7 @@ export default function Auth() {
               <Button className="w-full rounded-xl" onClick={submit} disabled={loading}>{loading ? "Working…" : mode === "signup" ? "Create account" : "Sign in"}</Button>
               <div className="relative my-2 text-center"><span className="bg-background px-3 text-xs text-muted-foreground">or</span><div className="absolute inset-x-0 top-1/2 -z-10 h-px bg-border" /></div>
               <Button variant="outline" className="w-full rounded-xl" onClick={google}>Continue with Google</Button>
-              <Button variant="outline" className="w-full rounded-xl" onClick={async () => { const r = await supabase.auth.signInWithOAuth({ provider: "apple", options: { redirectTo: window.location.origin } }); if (r.error) toast.error(String(r.error.message || r.error)); }}> Continue with Apple</Button>
+              <Button variant="outline" className="w-full rounded-xl" onClick={async () => { const r = await supabase.auth.signInWithOAuth({ provider: "apple", options: { redirectTo: authRedirectTo } }); if (r.error) toast.error(String(r.error.message || r.error)); }}> Continue with Apple</Button>
             </div>
           </motion.div>
         </section>
