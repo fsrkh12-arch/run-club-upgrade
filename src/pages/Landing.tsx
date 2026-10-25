@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Activity, BarChart3, Users, Trophy, Shield, Sparkles, Heart, Zap, ChevronRight, Play, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const fade = (delay = 0) => ({ initial: { opacity: 0, y: 20 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true }, transition: { duration: 0.6, delay } });
 
@@ -70,6 +71,22 @@ function PhonePreview() {
 }
 
 export default function Landing() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("code");
+    if (!code) return;
+
+    const finishSignIn = async () => {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (!error) {
+        window.history.replaceState({}, document.title, window.location.pathname);
+        navigate("/app", { replace: true });
+      }
+    };
+    finishSignIn();
+  }, [navigate]);
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur-xl">
