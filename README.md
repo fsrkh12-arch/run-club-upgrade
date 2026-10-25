@@ -2,6 +2,12 @@
 
 A running community app for logging runs, tracking progress, and joining local challenges.
 
+## Live site
+
+[Open Pace Club Baku](https://fsrkh12-arch.github.io/run-club-upgrade/)
+
+The public site is hosted on GitHub Pages. Sign in with Google to access the app.
+
 ## Run locally
 
 Install dependencies, then start the development server:
