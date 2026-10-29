@@ -1,20 +1,25 @@
 # Pace Club Baku
 
-A running community app for logging runs, tracking progress, and joining local challenges.
+A running-community application exploring how runners can record workouts, review progress, and connect around shared challenges. The project combines a public landing site with an account-based app.
 
-## Live site
+[Open the public site](https://fsrkh12-arch.github.io/run-club-upgrade/)
 
-[Open Pace Club Baku](https://fsrkh12-arch.github.io/run-club-upgrade/)
+## What is in the project
 
-The public site is hosted on GitHub Pages. Sign in with Google to access the app.
+- A responsive landing site and an application interface for runs, goals, community activity, and challenges.
+- Run-entry and progress views, with Supabase used for authentication and data in the application.
+- Email/password and social sign-in interfaces. Actual sign-in availability depends on the connected Supabase project and provider configuration.
+- Some interfaces contain sample content. Landing-page statistics and product claims should be independently verified before being interpreted as actual usage or available services.
 
 ## Run locally
 
-Install dependencies, then start the development server:
+The frontend uses React, TypeScript, Vite, and Tailwind CSS. Install Node.js, then from the repository directory:
 
 ```sh
-pnpm install
-pnpm dev
+npm install
+npm run dev
 ```
 
-The app uses Supabase for authentication and data. Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` in a local `.env` file before starting it.
+Configure `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` for the Supabase project you intend to use. The project's migrations are in `supabase/migrations`; a working backend also requires appropriate database and authentication configuration. Do not put service-role keys or other secrets in frontend environment variables.
+
+Other commands include `npm run build`, `npm run lint`, and `npm test`. The currently included example test is a placeholder, not comprehensive feature coverage.
