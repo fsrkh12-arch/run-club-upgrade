@@ -1,6 +1,8 @@
 # Pace Club Baku
 
-A running-community application exploring how runners can record workouts, review progress, and connect around shared challenges. The project combines a public landing site with an account-based app.
+Pace Club Baku grew from a problem I noticed: running can feel discouraging when people lack a community to run with or a clear way to see their progress. I wanted to explore both needs in one application, connecting runners around shared challenges while helping them track their training.
+
+This project also pushed me into unfamiliar territory. I researched and learned about maps and APIs, motion detection, gyroscope sensitivity, and progressive web app concepts as I developed the idea. The repository combines a public landing site with an account-based app; the features listed below describe what the project currently includes rather than every idea I explored.
 
 [Open the public site](https://fsrkh12-arch.github.io/run-club-upgrade/)
 
