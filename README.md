@@ -7,3 +7,5 @@ I created Pace Club Baku around a problem I noticed: running can feel discouragi
 The project brings together running logs, progress views, community activity, and challenges. It also pushed me to research unfamiliar topics, including maps and APIs, motion detection, gyroscope sensitivity, and progressive web apps. I used web resources and AI tools to support my learning.
 
 Some content is illustrative, and sign-in and data features depend on the connected services. The project is an evolving prototype.
+
+**Technologies:** React, TypeScript, Vite, Tailwind CSS, and Supabase.
